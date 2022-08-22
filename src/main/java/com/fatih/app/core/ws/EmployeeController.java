@@ -23,8 +23,8 @@ public class EmployeeController extends BaseController<Employee, EmployeeInfo, I
     }
     
     @PostMapping(ServiceUri.DATE_AND_INCOME)
-    public EmployeeInfo getByDateAndIncome(@RequestBody EmployeeInfo Body) 
+    public List<Employee> getByDateAndIncome(@RequestBody EmployeeInfo Body) throws AppServiceException 
     {
-    	
+    	return service.getByDateAndIncome(Body.getCreatedDate(), Body.getPrize());
     }
 }
