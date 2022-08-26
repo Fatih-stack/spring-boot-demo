@@ -4,6 +4,8 @@ import com.fatih.app.core.common.model.EmployeeInfo;
 import lombok.Data;
 
 import javax.persistence.Entity;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @Entity
@@ -12,7 +14,9 @@ public class Employee extends BaseEntity<EmployeeInfo> {
     private String department;
     private String name;
     private String surname;
-    private double prize;
+    private BigDecimal prize;
+    private BigDecimal income;
+    private Date choosenDate;
 
     @Override
     public EmployeeInfo toInfo() {
@@ -23,7 +27,9 @@ public class Employee extends BaseEntity<EmployeeInfo> {
         i.setSurname(getSurname());
         i.setDepartment(getDepartment());
         i.setLocation(getLocation());
+        i.setIncome(getIncome());
         i.setPrize(getPrize());
+        i.setChoosenDate(getChoosenDate());
         return i;
     }
 
@@ -34,6 +40,8 @@ public class Employee extends BaseEntity<EmployeeInfo> {
         setDepartment(info.getDepartment());
         setLocation(info.getLocation());
         setPrize(info.getPrize());
+        setChoosenDate(info.getChoosenDate());
+        setIncome(info.getIncome());
     }
 
 }

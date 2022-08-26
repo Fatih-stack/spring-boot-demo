@@ -13,4 +13,6 @@ public class ServiceUri {
 
     public static final String EMPLOYEE = "/employee";
     public static final String DATE_AND_INCOME = "/date-income";
+    public static final String UPDATE_LOCATION = "/update-location/{department}/{location}";
+    public static final String RANDOM_EMPLOYEE = "/random-employee";
 }

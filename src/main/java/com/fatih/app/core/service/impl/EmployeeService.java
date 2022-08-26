@@ -1,24 +1,29 @@
 package com.fatih.app.core.service.impl;
 
+import com.fatih.app.core.common.model.EmployeeChoosenDateAndIncomeRequest;
 import com.fatih.app.core.common.model.EmployeeInfo;
 import com.fatih.app.core.exception.AppServiceException;
+import com.fatih.app.core.persist.BaseEntity;
 import com.fatih.app.core.persist.Employee;
 import com.fatih.app.core.repo.EmployeeRepository;
 import com.fatih.app.core.service.IEmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
 import javax.annotation.PostConstruct;
 import java.util.List;
-import java.util.Date;
+import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class EmployeeService extends BaseService<Employee, EmployeeInfo> implements IEmployeeService {
 
     @Autowired
     private EmployeeRepository repo;
-    
+
     @Override
     public EmployeeRepository getRepo() {
         return repo;
@@ -106,11 +111,31 @@ public class EmployeeService extends BaseService<Employee, EmployeeInfo> impleme
     }
 
     @Override
-    public Employee getByEmployeename(String username) throws AppServiceException {
-        return getRepo().findByName(username).get(0);
+    public EmployeeInfo getByEmployeeName(String username) throws AppServiceException {
+        return getRepo().findByName(username).stream().findFirst().map(BaseEntity::toInfo).orElse(null);
     }
-    
-    public List<Employee> getByDateAndIncome(Date d, double income) throws AppServiceException {
-        return getRepo().findByCreatedDateAndIncome(d, income);
+
+    public List<EmployeeInfo> getEmployeeByDateAndIncome(EmployeeChoosenDateAndIncomeRequest dto) throws AppServiceException {
+        return getRepo().findByChoosenDateAfterAndIncomeGreaterThan(dto.getChoosenDate(), dto.getIncome())
+                .stream()
+                .map(BaseEntity::toInfo)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean updateLocation(String department, String location) throws AppServiceException {
+        try {
+            List<Employee> list = getRepo().findByDepartment(department);
+
+            for (Employee e : list) {
+                e.setLocation(location);
+                getRepo().save(e);
+            }
+            log.info("Location updated for department " + department);
+            return true;
+        } catch (Exception e) {
+            log.error("Error while updating location", e);
+            throw new AppServiceException(e);
+        }
     }
 }

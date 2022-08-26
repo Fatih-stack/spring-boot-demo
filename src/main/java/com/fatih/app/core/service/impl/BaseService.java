@@ -3,6 +3,7 @@ package com.fatih.app.core.service.impl;
 
 import com.fatih.app.core.common.model.BaseInfo;
 import com.fatih.app.core.exception.AppServiceException;
+import com.fatih.app.core.exception.NotFoundException;
 import com.fatih.app.core.persist.BaseEntity;
 import com.fatih.app.core.repo.BaseRepository;
 import com.fatih.app.core.service.IBaseService;
@@ -16,7 +17,7 @@ public abstract class BaseService<E extends BaseEntity<I>, I extends BaseInfo> i
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseService.class);
 
-    public abstract BaseRepository < E, I > getRepo();
+    public abstract BaseRepository<E, I> getRepo();
 
     public abstract E getEntity(I info);
 
@@ -28,7 +29,7 @@ public abstract class BaseService<E extends BaseEntity<I>, I extends BaseInfo> i
 
     @Override
     public I getById(Long id) throws AppServiceException {
-        E entity = getRepo().findById(id).get();
+        E entity = getRepo().findById(id).orElseThrow(() -> new NotFoundException());
         return entity.toInfo();
     }
 
@@ -65,10 +66,10 @@ public abstract class BaseService<E extends BaseEntity<I>, I extends BaseInfo> i
     }
 
     @Override
-    public List < I > getList() throws AppServiceException {
+    public List<I> getList() throws AppServiceException {
         try {
-            List < E > eList = (List < E >) getRepo().findAll();
-            List < I > list = new ArrayList <>();
+            List<E> eList = (List<E>) getRepo().findAll();
+            List<I> list = new ArrayList<>();
             for (E e : eList) {
                 list.add(e.toInfo());
             }
